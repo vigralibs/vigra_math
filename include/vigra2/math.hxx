@@ -49,7 +49,7 @@
 #include <vigra2/config.hxx>
 #include <vigra2/error.hxx>
 #include <vigra2/numeric_traits.hxx>
-#include "sized_int.hxx"
+#include <vigra2/sized_int.hxx>
 
 /** \page MathConstants Mathematical Constants
 
