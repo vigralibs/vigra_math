@@ -218,10 +218,10 @@ SquaredNormType<T> squaredNorm(T const & t);
         Namespace: vigra
     */
 template <class T>
-inline NormType<T>
+inline decltype(sqrt(squaredNorm(*(T*)0)))
 norm(T const & t)
 {
-    return sqrt(NormType<T>(squaredNorm(t)));
+    return sqrt(squaredNorm(t));
 }
 
 #define VIGRA_DEFINE_NORM(T) \
