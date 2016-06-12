@@ -45,6 +45,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <complex>
+#include <algorithm>
 #include <vigra2/config.hxx>
 #include <vigra2/error.hxx>
 #include <vigra2/numeric_traits.hxx>
