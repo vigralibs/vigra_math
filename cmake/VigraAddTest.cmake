@@ -21,11 +21,13 @@ endif()
 OPTION(AUTOEXEC_TESTS "Automatically execute each test after compilation ?" ON)
 OPTION(AUTOBUILD_TESTS "Compile tests as part of target 'all' (resp. 'ALL_BUILD') ?" OFF)
 
-ADD_CUSTOM_TARGET(check)
-ADD_CUSTOM_TARGET(ctest COMMAND ${CMAKE_CTEST_COMMAND})
+if(NOT TARGET check)
+    ADD_CUSTOM_TARGET(check)
+    ADD_CUSTOM_TARGET(ctest COMMAND ${CMAKE_CTEST_COMMAND})
 
-ADD_CUSTOM_TARGET(check_cpp)
-ADD_DEPENDENCIES(check check_cpp)
+    ADD_CUSTOM_TARGET(check_cpp)
+    ADD_DEPENDENCIES(check check_cpp)
+endif()
 
 MACRO(VIGRA_NATIVE_PATH out in)
     file(TO_CMAKE_PATH "${in}" ${out})
@@ -40,6 +42,11 @@ MACRO(VIGRA_NATIVE_PATH out in)
 ENDMACRO(VIGRA_NATIVE_PATH)
 
 FUNCTION(vigra_add_test target)
+
+    if(SKIP_TESTS)
+        return()
+    endif()
+
     # parse the args
     # Parse the options.
     set(MultiValueArgs SOURCES LIBRARIES)
