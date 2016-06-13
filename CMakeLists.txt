@@ -2,10 +2,10 @@ cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
 
 project(math VERSION 1.0 LANGUAGES CXX)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
 
-include(VigraAddDependency)
-add_dependency(foundation REPO https://github.com/vigralibs/foundation)
+include(VigraAddExternal)
+vigra_add_external(foundation REPO https://github.com/vigralibs/foundation)
 
 add_library(math INTERFACE)
 TARGET_LINK_LIBRARIES(math INTERFACE foundation)
