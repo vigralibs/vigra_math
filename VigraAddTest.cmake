@@ -18,11 +18,16 @@ if(VigraAddTestIncluded)
     return()
 endif()
 
-ADD_CUSTOM_TARGET(check)
-ADD_CUSTOM_TARGET(ctest COMMAND ${CMAKE_CTEST_COMMAND})
+OPTION(AUTOEXEC_TESTS "Automatically execute each test after compilation ?" ON)
+OPTION(AUTOBUILD_TESTS "Compile tests as part of target 'all' (resp. 'ALL_BUILD') ?" OFF)
 
-ADD_CUSTOM_TARGET(check_cpp)
-ADD_DEPENDENCIES(check check_cpp)
+if(NOT TARGET check)
+    ADD_CUSTOM_TARGET(check)
+    ADD_CUSTOM_TARGET(ctest COMMAND ${CMAKE_CTEST_COMMAND})
+
+    ADD_CUSTOM_TARGET(check_cpp)
+    ADD_DEPENDENCIES(check check_cpp)
+endif()
 
 MACRO(VIGRA_NATIVE_PATH out in)
     file(TO_CMAKE_PATH "${in}" ${out})
@@ -37,6 +42,11 @@ MACRO(VIGRA_NATIVE_PATH out in)
 ENDMACRO(VIGRA_NATIVE_PATH)
 
 FUNCTION(vigra_add_test target)
+
+    if(SKIP_TESTS)
+        return()
+    endif()
+
     # parse the args
     # Parse the options.
     set(MultiValueArgs SOURCES LIBRARIES)
@@ -59,8 +69,9 @@ FUNCTION(vigra_add_test target)
 
     ADD_DEPENDENCIES(check_cpp ${target})
     ADD_DEPENDENCIES(ctest ${target})
+    ADD_DEPENDENCIES(${target} foundation)
 
-    TARGET_LINK_LIBRARIES(${target} unittest)
+    TARGET_LINK_LIBRARIES(${target} foundation)
     if(AT_LIBRARIES)
         TARGET_LINK_LIBRARIES(${target} ${AT_LIBRARIES})
     endif()
