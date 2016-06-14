@@ -37,7 +37,7 @@
 #include <iostream>
 #include <string>
 #include <vigra2/unittest.hxx>
-#include <vigra2/algorithm.hxx>
+#include <vigra2/math/algorithm.hxx>
 
 using namespace vigra;
 
@@ -46,7 +46,7 @@ struct AlgorithmTest
     AlgorithmTest()
     {
     }
-    
+
     void testArgMinMax()
     {
         double data[] = {1.0, 5.0,
@@ -122,7 +122,7 @@ struct AlgorithmTest
         shouldEqual(crc, 77705727u);
 
         const int size = 446;
-        char t[size+1] =  
+        char t[size+1] =
             "Lorem ipsum dolor sit amet, consectetur adipisicing elit, "
             "sed do eiusmod tempor incididunt ut labore et dolore magna "
             "aliqua. Ut enim ad minim veniam, quis nostrud exercitation "

@@ -37,7 +37,7 @@
 #include <iostream>
 #include <string>
 #include <vigra2/unittest.hxx>
-#include <vigra2/rational.hxx>
+#include <vigra2/math/rational.hxx>
 
 using namespace vigra;
 

@@ -37,7 +37,7 @@
 #include <iostream>
 #include <string>
 #include <vigra2/unittest.hxx>
-#include <vigra2/gaussians.hxx>
+#include <vigra2/math/gaussians.hxx>
 
 using namespace vigra;
 
@@ -46,7 +46,7 @@ struct GaussianTest
     GaussianTest()
     {
     }
-    
+
     void test()
     {
         Gaussian<double> g,

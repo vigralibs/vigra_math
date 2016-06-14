@@ -37,7 +37,7 @@
 #include <iostream>
 #include <string>
 #include <vigra2/unittest.hxx>
-#include <vigra2/clebsch-gordan.hxx>
+#include <vigra2/math/clebsch-gordan.hxx>
 
 using namespace vigra;
 
@@ -46,7 +46,7 @@ struct ClebschGordanTest
     ClebschGordanTest()
     {
     }
-    
+
     void test()
     {
         shouldEqualTolerance(clebschGordan(0.5, 0.5, 0.5, 0.5, 1.0, 1.0), std::sqrt(1.0), 1e-15);

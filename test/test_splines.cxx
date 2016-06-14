@@ -37,7 +37,7 @@
 #include <iostream>
 #include <string>
 #include <vigra2/unittest.hxx>
-#include <vigra2/splines.hxx>
+#include <vigra2/math/splines.hxx>
 
 using namespace vigra;
 

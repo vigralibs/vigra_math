@@ -37,7 +37,7 @@
 #include <iostream>
 #include <string>
 #include <vigra2/unittest.hxx>
-#include <vigra2/math.hxx>
+#include <vigra2/math/math.hxx>
 // #include <vigra2/array_vector.hxx>
 // #include <vigra2/fixedpoint.hxx>
 // #include <vigra2/linear_algebra.hxx>
@@ -120,19 +120,19 @@ struct MathTest
             shouldEqual(sin_pi(x), 0.0);
             shouldEqual(cos_pi(x+0.5), 0.0);
         }
-        
+
         for(double x = -4.5; x <= 4.5; x += 2.0)
         {
             shouldEqual(sin_pi(x), -1.0);
             shouldEqual(cos_pi(x+0.5), 1.0);
         }
-        
+
         for(double x = -3.5; x <= 4.5; x += 2.0)
         {
             shouldEqual(sin_pi(x), 1.0);
             shouldEqual(cos_pi(x+0.5), -1.0);
         }
-        
+
         for(double x = -4.0; x <= 4.0; x += 0.0625)
         {
             shouldEqualTolerance(sin_pi(x), std::sin(M_PI*x), 1e-14);
@@ -308,7 +308,7 @@ struct MathTest
         // shouldEqual(q*2.0, Q(2,4,6,8));
         // shouldEqual(2.0*q, Q(2,4,6,8));
 
-        // Q q1 = q / q;       
+        // Q q1 = q / q;
         // shouldEqualTolerance(q1[0], 1.0, 1e-16);
         // shouldEqualTolerance(q1[1], 0.0, 1e-16);
         // shouldEqualTolerance(q1[2], 0.0, 1e-16);
@@ -324,7 +324,7 @@ struct MathTest
         // Q q(1.0, 2.0, 3.0, 4.0);
         // q /= norm(q);
 
-        // double ref[3][3] = {{-2.0/3.0,  0.4/3.0, 2.2/3.0 }, 
+        // double ref[3][3] = {{-2.0/3.0,  0.4/3.0, 2.2/3.0 },
                             // { 2.0/3.0, -1.0/3.0, 2.0/3.0 },
                             // { 1.0/3.0,  2.8/3.0, 0.4/3.0 } };
 
@@ -525,9 +525,9 @@ struct MathTest
 
         // shouldEqual((FixedPoint16<1, FPOverflowSaturate>(3.75).value), (1 << 15)-1);
         // shouldEqual((FixedPoint16<1, FPOverflowSaturate>(-3.75).value), -(1 << 15));
-        // try { FixedPoint16<1, FPOverflowError>(3.75); failTest("No exception thrown"); } 
+        // try { FixedPoint16<1, FPOverflowError>(3.75); failTest("No exception thrown"); }
         // catch(PreconditionViolation &) {}
-        // try { FixedPoint16<1, FPOverflowError>(-3.75); failTest("No exception thrown"); } 
+        // try { FixedPoint16<1, FPOverflowError>(-3.75); failTest("No exception thrown"); }
         // catch(PreconditionViolation &) {}
 
         // FixedPoint16<4> v(3.75);
@@ -608,7 +608,7 @@ struct MathTest
         // typedef FixedPoint16<8> FP8;
         // typedef FixedPoint16<13> FP13;
         // typedef FixedPoint16<15> FP15;
-        
+
         // FP1 t0(0), t1(0.75), t2(0.25);
         // signed char v1 = 1, v2 = 2, v4 = 4, v8 = 8;
 
@@ -619,7 +619,7 @@ struct MathTest
         // shouldEqual(FP2(t1) /= t2, FP2(3));
         // shouldEqual(FP2(t1) /= t0, NumericTraits<FP2>::max());
         // shouldEqual(FP2(-t1) /= t0, NumericTraits<FP2>::min());
-        
+
         // FP2 res;
         // shouldEqual(add(t1, t1, res), FP2(1.5));
         // shouldEqual(sub(t1, t1, res), FP2(0));
@@ -647,9 +647,9 @@ struct MathTest
 
         // shouldEqual((FixedPoint16<2, FPOverflowSaturate>(t1*FP7(v8)).value), (1 << 15)-1);
         // shouldEqual((FixedPoint16<2, FPOverflowSaturate>(t1*FP7(-v8)).value), -(1 << 15));
-        // try { FixedPoint16<2, FPOverflowError>(t1*FP7(v8)); failTest("No exception thrown"); } 
+        // try { FixedPoint16<2, FPOverflowError>(t1*FP7(v8)); failTest("No exception thrown"); }
         // catch(PreconditionViolation &) {}
-        // try { FixedPoint16<2, FPOverflowError>(t1*FP7(-v8)); failTest("No exception thrown"); } 
+        // try { FixedPoint16<2, FPOverflowError>(t1*FP7(-v8)); failTest("No exception thrown"); }
         // catch(PreconditionViolation &) {}
 
         // shouldEqual((FP13(t1 * FP7(v1))).value, 3);
@@ -716,7 +716,7 @@ struct MathTest
         // shouldEqual(atan2(FP1(0), FP1(-1)), FP2(M_PI));
         // shouldEqual(atan2(FP1(1), FP1(0)), FP2(0.5*M_PI));
         // shouldEqual(atan2(FP1(-1), FP1(0)), FP2(-0.5*M_PI));
-        
+
         // for(int i = -179; i < 180; ++i)
         // {
             // double angle = M_PI*i/180.0;
@@ -1001,7 +1001,7 @@ struct MathTest
         // for(unsigned int i=0, k=0; i<c; ++i)
             // for(unsigned int j=0; j<c; ++j, ++k)
                 // shouldEqual(a2(i,j), tref2[k]);
-        
+
         // shouldEqual(trace(a2), 3.0);
 
         // Matrix id = identityMatrix<double>(r);
@@ -1090,7 +1090,7 @@ struct MathTest
         // Matrix matColumnMean = Matrix(1, 2, columnMean);
         // Matrix matRowMean = Matrix(3, 1, rowMean);
         // shouldEqualSequence(matColumnMean.data(), matColumnMean.data()+2, a.mean(0).data());
-        // shouldEqualSequence(matRowMean.data(), matRowMean.data()+3, a.mean(1).data());  
+        // shouldEqualSequence(matRowMean.data(), matRowMean.data()+3, a.mean(1).data());
     // }
 
     // void testArgMinMax()
@@ -1391,7 +1391,7 @@ struct MathTest
             // shouldEqualSequenceTolerance(ax.data(), ax.data()+size, b.data(), epsilon);
 
             // Matrix c = transpose(a) * a; // make a symmetric positive definite matrix
-            // Matrix d = transpose(a) * b; 
+            // Matrix d = transpose(a) * b;
             // should(linearSolve (c, d, x, "Cholesky"));
             // ax = c * x;
             // shouldEqualSequenceTolerance(ax.data(), ax.data()+size, d.data(), epsilon);
@@ -1622,7 +1622,7 @@ struct MathTest
                               // 0.0, 0.2, 0.0,
                               // 0.0, 0.0, 0.23076923076923081,
                               // 0.0, 0.4, 0.0 };
-            
+
         // Matrix m(3, 5, data2), piref(5, 3, refdata), pitref(transpose(piref));
         // Matrix pi = inverse(m);
         // shouldEqual(pi.shape(), Shape(5, 3));
