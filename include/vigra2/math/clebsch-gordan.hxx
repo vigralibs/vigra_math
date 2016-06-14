@@ -35,8 +35,8 @@
 
 #pragma once
 
-#ifndef VIGRA2_CLEBSCH_GORDAN_HXX
-#define VIGRA2_CLEBSCH_GORDAN_HXX
+#ifndef VIGRA2_MATH_CLEBSCH_GORDAN_HXX
+#define VIGRA2_MATH_CLEBSCH_GORDAN_HXX
 
 #include <vigra2/config.hxx>
 #include <vigra2/numeric_traits.hxx>
@@ -422,5 +422,5 @@ double clebschGordan (double l1, double m1, double l2, double m2, double l3, dou
 
 } // namespace vigra
 
-#endif // VIGRA2_CLEBSCH_GORDAN_HXX
+#endif // VIGRA2_MATH_CLEBSCH_GORDAN_HXX
 

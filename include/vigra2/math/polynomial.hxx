@@ -35,8 +35,8 @@
 
 #pragma once
 
-#ifndef VIGRA2_POLYNOMIAL_HXX
-#define VIGRA2_POLYNOMIAL_HXX
+#ifndef VIGRA2_MATH_POLYNOMIAL_HXX
+#define VIGRA2_MATH_POLYNOMIAL_HXX
 
 #include <cmath>
 #include <complex>
@@ -1110,4 +1110,4 @@ ostream & operator<<(ostream & o, vigra::PolynomialView<T> const & p)
 
 } // namespace std
 
-#endif // VIGRA2_POLYNOMIAL_HXX
+#endif // VIGRA2_MATH_POLYNOMIAL_HXX

@@ -35,8 +35,8 @@
 
 #pragma once
 
-#ifndef VIGRA2_ALGORITHM_HXX
-#define VIGRA2_ALGORITHM_HXX
+#ifndef VIGRA2_MATH_ALGORITHM_HXX
+#define VIGRA2_MATH_ALGORITHM_HXX
 
 #include <vigra2/sized_int.hxx>
 #include <vigra2/numeric_traits.hxx>
@@ -796,4 +796,4 @@ void updateMax(T & x, const T & y)
 
 } // namespace vigra
 
-#endif /* VIGRA2_ALGORITHM_HXX */
+#endif /* VIGRA2_MATH_ALGORITHM_HXX */

@@ -35,8 +35,8 @@
 
 #pragma once
 
-#ifndef VIGRA2_MATH_HXX_HXX
-#define VIGRA2_MATH_HXX_HXX
+#ifndef VIGRA2_MATH_MATH_HXX
+#define VIGRA2_MATH_MATH_HXX
 
 #ifdef _MSC_VER
 # pragma warning (disable: 4996) // hypot/_hypot confusion
@@ -1662,4 +1662,4 @@ VIGRA_MATH_FUNC_HELPER(long double)
 
 } // namespace vigra
 
-#endif /* VIGRA2_MATH_HXX_HXX */
+#endif /* VIGRA2_MATH_MATH_HXX */

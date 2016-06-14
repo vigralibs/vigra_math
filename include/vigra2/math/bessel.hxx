@@ -35,8 +35,8 @@
 
 #pragma once
 
-#ifndef VIGRA2_BESSEL_HXX
-#define VIGRA2_BESSEL_HXX
+#ifndef VIGRA2_MATH_BESSEL_HXX
+#define VIGRA2_MATH_BESSEL_HXX
 
 #include "math.hxx"
 #include <vector>
@@ -338,4 +338,4 @@ inline double besselY(int n, double x)
 
 } // namespace vigra
 
-#endif // VIGRA2_BESSEL_HXX
+#endif // VIGRA2_MATH_BESSEL_HXX

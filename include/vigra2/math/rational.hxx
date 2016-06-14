@@ -44,8 +44,8 @@
 
 #pragma once
 
-#ifndef VIGRA2_RATIONAL_HXX
-#define VIGRA2_RATIONAL_HXX
+#ifndef VIGRA2_MATH_RATIONAL_HXX
+#define VIGRA2_MATH_RATIONAL_HXX
 
 #include <cmath>
 #include <stdexcept>
@@ -1301,5 +1301,5 @@ std::ostream& operator<< (std::ostream& os, const vigra::Rational<IntType>& r)
 
 } // namespace vigra
 
-#endif  // VIGRA2_RATIONAL_HXX
+#endif  // VIGRA2_MATH_RATIONAL_HXX
 

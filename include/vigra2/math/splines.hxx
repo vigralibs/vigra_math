@@ -35,8 +35,8 @@
 
 #pragma once
 
-#ifndef VIGRA2_SPLINES_HXX
-#define VIGRA2_SPLINES_HXX
+#ifndef VIGRA2_MATH_SPLINES_HXX
+#define VIGRA2_MATH_SPLINES_HXX
 
 #include <cmath>
 #include <vigra2/config.hxx>
@@ -1383,4 +1383,4 @@ CatmullRomSpline<T>::operator()(argument_type x) const
 } // namespace vigra
 
 
-#endif /* VIGRA2_SPLINES_HXX */
+#endif /* VIGRA2_MATH_SPLINES_HXX */
