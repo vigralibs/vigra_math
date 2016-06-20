@@ -726,7 +726,7 @@ void Rational<IntType>::normalize()
     template <class T1, class T2>
     struct PromoteTraits<Rational<T1>, Rational<T2> >
     {
-        typedef Rational<typename PromoteTraits<T1, T2>::Promote> Promote;
+        typedef Rational<PromoteType<T1, T2> > type;
     };
     \endcode
 
@@ -772,32 +772,32 @@ struct NormTraits<Rational<T> >
 template <class T>
 struct PromoteTraits<Rational<T>, Rational<T> >
 {
-    typedef Rational<typename PromoteTraits<T, T>::Promote> Promote;
-    static Promote toPromote(Rational<T> const & v) { return v; }
+    typedef Rational<PromoteType<T, T> > type;
+    static type toPromote(Rational<T> const & v) { return v; }
 };
 
 template <class T1, class T2>
 struct PromoteTraits<Rational<T1>, Rational<T2> >
 {
-    typedef Rational<typename PromoteTraits<T1, T2>::Promote> Promote;
-    static Promote toPromote(Rational<T1> const & v) { return v; }
-    static Promote toPromote(Rational<T2> const & v) { return v; }
+    typedef Rational<PromoteType<T1, T2> > type;
+    static type toPromote(Rational<T1> const & v) { return v; }
+    static type toPromote(Rational<T2> const & v) { return v; }
 };
 
 template <class T1, class T2>
 struct PromoteTraits<Rational<T1>, T2 >
 {
-    typedef Rational<typename PromoteTraits<T1, T2>::Promote> Promote;
-    static Promote toPromote(Rational<T1> const & v) { return v; }
-    static Promote toPromote(T2 const & v) { return Promote(v); }
+    typedef Rational<PromoteType<T1, T2> > type;
+    static type toPromote(Rational<T1> const & v) { return v; }
+    static type toPromote(T2 const & v) { return Promote(v); }
 };
 
 template <class T1, class T2>
 struct PromoteTraits<T1, Rational<T2> >
 {
-    typedef Rational<typename PromoteTraits<T1, T2>::Promote> Promote;
-    static Promote toPromote(T1 const & v) { return Promote(v); }
-    static Promote toPromote(Rational<T2> const & v) { return v; }
+    typedef Rational<PromoteType<T1, T2> > type;
+    static type toPromote(T1 const & v) { return Promote(v); }
+    static type toPromote(Rational<T2> const & v) { return v; }
 };
 
 #endif // NO_PARTIAL_TEMPLATE_SPECIALIZATION
@@ -1000,7 +1000,7 @@ bool
 operator< (const Rational<IntType1> & l, const Rational<IntType2>& r)
 {
     // Avoid repeated construction
-    typedef typename PromoteTraits<IntType1, IntType2>::Promote IntType;
+    typedef PromoteType<IntType1, IntType2> IntType;
     IntType zero(0);
 
     // Handle the easy cases. Take advantage of the fact
@@ -1040,7 +1040,7 @@ bool
 operator< (const Rational<IntType1> & l, IntType2 const & i)
 {
     // Avoid repeated construction
-    typedef typename PromoteTraits<IntType1, IntType2>::Promote IntType;
+    typedef PromoteType<IntType1, IntType2> IntType;
     IntType zero(0);
 
     // Handle the easy cases. Take advantage of the fact
