@@ -1196,7 +1196,8 @@ REAL legendre(unsigned int l, REAL x)
         Namespace: vigra
     */
 template <class REAL>
-REAL sin_pi(REAL x)
+EnableIf<std::is_floating_point<REAL>::value, REAL>
+sin_pi(REAL x)
 {
     if(x < 0.0)
         return -sin_pi(-x);
@@ -1234,7 +1235,8 @@ REAL sin_pi(REAL x)
         Namespace: vigra
     */
 template <class REAL>
-REAL cos_pi(REAL x)
+EnableIf<std::is_floating_point<REAL>::value, REAL>
+cos_pi(REAL x)
 {
     return sin_pi(x+0.5);
 }
