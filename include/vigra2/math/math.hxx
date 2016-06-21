@@ -218,8 +218,8 @@ SquaredNormType<T> squaredNorm(T const & t);
         Namespace: vigra
     */
 template <class T>
-inline decltype(sqrt(squaredNorm(*(T*)0)))
-norm(T const & t)
+inline auto
+norm(T const & t) -> decltype(sqrt(squaredNorm(t)))
 {
     return sqrt(squaredNorm(t));
 }
@@ -641,7 +641,9 @@ using std::hypot;
         Namespace: vigra
     */
 template <class T>
-inline T sign(T t)
+inline
+EnableIf<std::is_arithmetic<T>::value, T>
+sign(T t)
 {
     return t > NumericTraits<T>::zero()
                ? NumericTraits<T>::one()
@@ -658,7 +660,9 @@ inline T sign(T t)
         Namespace: vigra
     */
 template <class T>
-inline int signi(T t)
+inline
+EnableIf<std::is_arithmetic<T>::value, int>
+signi(T t)
 {
     return t > NumericTraits<T>::zero()
                ? 1
