@@ -50,6 +50,7 @@
 #include <vigra2/error.hxx>
 #include <vigra2/numeric_traits.hxx>
 #include <vigra2/sized_int.hxx>
+#include <vigra2/concepts.hxx>
 
 /** \page MathConstants Mathematical Constants
 
@@ -132,9 +133,67 @@ namespace vigra {
         Namespace: vigra
     */
 template <class T>
-inline PromoteType<T> sq(T t)
+inline EnableIf<std::is_arithmetic<T>::value,
+                PromoteType<T>>
+sq(T t)
 {
     return t*t;
+}
+
+    /** \brief A proper minimum function.
+
+        The <tt>std::min</tt> template matches everything -- this is way too
+        greedy to be useful. VIGRA implements the basic <tt>min</tt> function
+        only for arithmetic types and provides explicit overloads for everything
+        else. Moreover, VIGRA's <tt>min</tt> function also computes the minimum
+        between two different types, as long as they have a <tt>std::common_type</tt>.
+
+        <b>\#include</b> \<vigra/mathutil.hxx\><br>
+        Namespace: vigra
+    */
+template <class T1, class T2>
+// EnableIf<(std::is_arithmetic<T1>::value && std::is_arithmetic<T2>::value),
+         // (typename std::common_type<T1, T2>::type)>
+typename std::common_type<EnableIf<std::is_arithmetic<T1>::value, T1>,
+                          EnableIf<std::is_arithmetic<T2>::value, T2> >::type
+min(T1 const & t1, T2 const & t2)
+{
+    return std::min<typename std::common_type<T1, T2>::type>(t1, t2);
+}
+
+template <class T>
+EnableIf<std::is_arithmetic<T>::value,
+         T const &>
+min(T const & t1, T const & t2)
+{
+    return std::min(t1, t2);
+}
+
+    /** \brief A proper maximum function.
+
+        The <tt>std::max</tt> template matches everything -- this is way too
+        greedy to be useful. VIGRA implements the basic <tt>max</tt> function
+        only for arithmetic types and provides explicit overloads for everything
+        else. Moreover, VIGRA's <tt>max</tt> function also computes the maximum
+        between two different types, as long as they have a <tt>std::common_type</tt>.
+
+        <b>\#include</b> \<vigra/mathutil.hxx\><br>
+        Namespace: vigra
+    */
+template <class T1, class T2>
+typename std::common_type<EnableIf<std::is_arithmetic<T1>::value, T1>,
+                          EnableIf<std::is_arithmetic<T2>::value, T2> >::type
+max(T1 const & t1, T2 const & t2)
+{
+    return std::max<typename std::common_type<T1, T2>::type>(t1, t2);
+}
+
+template <class T>
+EnableIf<std::is_arithmetic<T>::value,
+         T const &>
+max(T const & t1, T const & t2)
+{
+    return std::max(t1, t2);
 }
 
 using std::sqrt;

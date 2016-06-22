@@ -40,7 +40,7 @@
 
 #include <vigra2/sized_int.hxx>
 #include <vigra2/numeric_traits.hxx>
-// #include "inspector_passes.hxx"
+#include "math.hxx"
 #include <algorithm>
 #include <functional>
 #include <iterator>
@@ -781,14 +781,12 @@ inline uint32_t concatenateChecksum(uint32_t checksum, const char * data, unsign
 template <class T>
 void updateMin(T & x, const T & y)
 {
-    using std::min;
     x = min(x, y);
 }
 
 template <class T>
 void updateMax(T & x, const T & y)
 {
-    using std::max;
     x = max(x, y);
 }
 
