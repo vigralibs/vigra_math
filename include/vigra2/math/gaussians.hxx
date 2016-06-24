@@ -42,7 +42,7 @@
 #include <vector>
 #include <vigra2/config.hxx>
 #include <vigra2/error.hxx>
-#include "math.hxx"
+#include <vigra2/mathutil.hxx>
 
 namespace vigra {
 

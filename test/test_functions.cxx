@@ -37,7 +37,7 @@
 #include <iostream>
 #include <string>
 #include <vigra2/unittest.hxx>
-#include <vigra2/math/math.hxx>
+#include <vigra2/math/functions.hxx>
 // #include <vigra2/array_vector.hxx>
 // #include <vigra2/fixedpoint.hxx>
 // #include <vigra2/linear_algebra.hxx>
@@ -49,59 +49,13 @@
 
 using namespace vigra;
 
-struct MathTest
+struct FunctionsTest
 {
-    void testSpecialIntegerFunctions()
-    {
-        for(int32_t i = 0; i < 1024; ++i)
-        {
-            shouldEqual(sqrti(i), (int32_t)floor(sqrt((double)i)));
-        }
-
-        shouldEqual(roundi(0.0), 0);
-        shouldEqual(roundi(1.0), 1);
-        shouldEqual(roundi(1.1), 1);
-        shouldEqual(roundi(1.6), 2);
-        shouldEqual(roundi(-1.0), -1);
-        shouldEqual(roundi(-1.1), -1);
-        shouldEqual(roundi(-1.6), -2);
-
-        uint32_t roundPower2[] = {0, 1, 2, 3, 4, 5, 7, 8, 9, 15, 16, 0xffff, 0x7fffffff, 0x80000000, 0x80000001, 0xffffffff};
-        uint32_t floorResult[] = {0, 1, 2, 2, 4, 4, 4, 8, 8, 8, 16, 0x8000, 0x40000000, 0x80000000, 0x80000000, 0x80000000};
-        uint32_t ceilResult[] = {0, 1, 2, 4, 4, 8, 8, 8, 16, 16, 16, 0x10000, 0x80000000, 0x80000000, 0, 0};
-        for(unsigned int i = 0; i < sizeof(roundPower2) / sizeof(uint32_t); ++i)
-        {
-            shouldEqual(floorPower2(roundPower2[i]), floorResult[i]);
-            shouldEqual(ceilPower2(roundPower2[i]), ceilResult[i]);
-        }
-
-        for(int32_t k=0; k<32; ++k)
-        {
-            shouldEqual(log2i(1 << k), k);
-            shouldEqual(log2i((1 << k) + 1), k == 0 ? 1 : k);
-            shouldEqual(log2i((1 << k) - 1), k-1);
-        }
-
-        should(even(0));
-        should(!odd(0));
-        should(!even(1));
-        should(odd(1));
-        should(even(2));
-        should(!odd(2));
-        should(!even(-1));
-        should(odd(-1));
-        should(even(-2));
-        should(!odd(-2));
-    }
-
-
     void testSpecialFunctions()
     {
         shouldEqualTolerance(ellipticIntegralE(M_PI / 2.0, 0.0), M_PI / 2.0, 1e-14);
         shouldEqualTolerance(ellipticIntegralF(0.3, 0.3), 0.30039919311549118, 1e-14);
         shouldEqualTolerance(ellipticIntegralE(0.3, 0.3), 0.29960175507025716, 1e-14);
-
-        shouldEqualTolerance(erf(0.3), 0.32862675945912745, 1e-7);
 
         should(noncentralChi2CDFApprox(200, 0.0, 200.0) > 0.5);
         should(noncentralChi2CDFApprox(200, 0.0, 199.0) < 0.5);
@@ -114,64 +68,6 @@ struct MathTest
         shouldEqualTolerance(noncentralChi2(3, 2.0, 2.0), 0.13846402271767755, 1e-7);
         shouldEqualTolerance(noncentralChi2CDFApprox(2, 2.0, 2.0), 0.34574583872316456, 1e-1);
         shouldEqualTolerance(noncentralChi2CDFApprox(3, 2.0, 2.0), 0.22073308707450343, 1e-1);
-
-        for(double x = -4.0; x <= 4.0; x += 1.0)
-        {
-            shouldEqual(sin_pi(x), 0.0);
-            shouldEqual(cos_pi(x+0.5), 0.0);
-        }
-
-        for(double x = -4.5; x <= 4.5; x += 2.0)
-        {
-            shouldEqual(sin_pi(x), -1.0);
-            shouldEqual(cos_pi(x+0.5), 1.0);
-        }
-
-        for(double x = -3.5; x <= 4.5; x += 2.0)
-        {
-            shouldEqual(sin_pi(x), 1.0);
-            shouldEqual(cos_pi(x+0.5), -1.0);
-        }
-
-        for(double x = -4.0; x <= 4.0; x += 0.0625)
-        {
-            shouldEqualTolerance(sin_pi(x), std::sin(M_PI*x), 1e-14);
-            shouldEqualTolerance(cos_pi(x), std::cos(M_PI*x), 1e-14);
-        }
-
-        shouldEqualTolerance(sin_pi(0.25), 0.5*M_SQRT2, 2e-16);
-        shouldEqualTolerance(cos_pi(0.25), 0.5*M_SQRT2, 2e-16);
-
-        shouldEqual(gamma(4.0), 6.0);
-        shouldEqualTolerance(gamma(0.1), 9.5135076986687306, 1e-15);
-        shouldEqualTolerance(gamma(3.2), 2.4239654799353683, 1e-15);
-        shouldEqualTolerance(gamma(170.2), 1.1918411166366696e+305, 1e-15);
-        shouldEqualTolerance(gamma(-0.1), -10.686287021193193, 1e-14);
-        shouldEqualTolerance(gamma(-3.2), 0.689056412005979, 1e-14);
-        shouldEqualTolerance(gamma(-170.2), -2.6348340538196879e-307, 1e-14);
-        try { gamma(0.0); failTest("No exception thrown"); } catch(ContractViolation &) {}
-        try { gamma(-1.0); failTest("No exception thrown"); } catch(ContractViolation &) {}
-
-        shouldEqual(loggamma(1.0), 0.0);
-        shouldEqual(loggamma(2.0), 0.0);
-        shouldEqualTolerance(loggamma(4.0e-22), 49.2705776847491144296, 1e-15);
-        shouldEqualTolerance(loggamma(0.1), 2.2527126517342055401, 1e-15);
-        shouldEqualTolerance(loggamma(0.3), 1.0957979948180756047, 1e-15);
-        shouldEqualTolerance(loggamma(0.8), 0.15205967839983755563, 1e-15);
-        shouldEqualTolerance(loggamma(1.1), -0.049872441259839757344, 1e-15);
-        shouldEqualTolerance(loggamma(1.3), -0.10817480950786048655, 1e-15);
-        shouldEqualTolerance(loggamma(1.8), -0.071083872914372153717, 1e-15);
-        shouldEqualTolerance(loggamma(3.0), 0.69314718055994528623, 1e-15);
-        shouldEqualTolerance(loggamma(3.1), 0.78737508327386251938, 1e-15);
-        shouldEqualTolerance(loggamma(4.0), 1.79175946922805500081, 1e-15);
-        shouldEqualTolerance(loggamma(8.0), 8.5251613610654143002, 1e-15);
-        shouldEqualTolerance(loggamma(1000.0), 5905.2204232091812118261, 1e-15);
-        shouldEqualTolerance(loggamma(1000.2), 5906.6018942569799037, 1e-15);
-        shouldEqualTolerance(loggamma(2.8e+17), 1.096859847946237952e+19, 1e-15);
-        shouldEqualTolerance(loggamma(2.9e+17), 1.1370510622188449792e+19, 1e-15);
-        shouldEqualTolerance(loggamma(5.7646075230342349e+17), 2.2998295812288974848e+19, 1e-15);
-        try { loggamma(0.0); failTest("No exception thrown"); } catch(ContractViolation &) {}
-        try { loggamma(-1.0); failTest("No exception thrown"); } catch(ContractViolation &) {}
 
         double args[5] = {0.0, 1.0, 0.7, -0.7, -1.0};
         for(int i=0; i<5; ++i)
@@ -1931,14 +1827,13 @@ struct MathTest
 // };
 
 
-struct MathTestSuite
+struct FunctionsTestSuite
 : public test_suite
 {
-    MathTestSuite()
-    : test_suite("MathTest")
+    FunctionsTestSuite()
+    : test_suite("FunctionsTest")
     {
-        add( testCase(&MathTest::testSpecialIntegerFunctions));
-        add( testCase(&MathTest::testSpecialFunctions));
+        add( testCase(&FunctionsTest::testSpecialFunctions));
 
         // add( testCase(&QuaternionTest::testContents));
         // add( testCase(&QuaternionTest::testStreamIO));
@@ -1980,7 +1875,7 @@ int main(int argc, char ** argv)
 {
   try
   {
-    MathTestSuite test;
+    FunctionsTestSuite test;
 
     int failed = test.run(testsToBeExecuted(argc, argv));
 

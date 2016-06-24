@@ -41,7 +41,7 @@
 #include <vigra2/config.hxx>
 #include <vigra2/numeric_traits.hxx>
 #include <vigra2/error.hxx>
-#include "math.hxx"
+#include <vigra2/mathutil.hxx>
 #include <vector>
 #include <sstream>
 
