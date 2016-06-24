@@ -45,7 +45,7 @@
 #include <iosfwd>
 #include <vigra2/error.hxx>
 #include <vigra2/numeric_traits.hxx>
-#include "math.hxx"
+#include <vigra2/mathutil.hxx>
 
 namespace vigra {
 

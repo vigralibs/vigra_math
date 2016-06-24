@@ -38,7 +38,7 @@
 #ifndef VIGRA2_MATH_BESSEL_HXX
 #define VIGRA2_MATH_BESSEL_HXX
 
-#include "math.hxx"
+#include <vigra2/mathutil.hxx>
 #include <vector>
 
 #ifdef HasBoostMath

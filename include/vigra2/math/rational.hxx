@@ -52,7 +52,7 @@
 #include <iosfwd>
 #include <type_traits>
 #include <vigra2/config.hxx>
-#include "math.hxx"
+#include <vigra2/mathutil.hxx>
 
 namespace vigra {
 

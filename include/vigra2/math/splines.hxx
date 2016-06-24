@@ -41,7 +41,7 @@
 #include <cmath>
 #include <vector>
 #include <vigra2/config.hxx>
-#include "math.hxx"
+#include <vigra2/mathutil.hxx>
 
 namespace vigra {
 
