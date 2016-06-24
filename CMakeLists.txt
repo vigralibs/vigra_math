@@ -6,10 +6,10 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/vigralibs_cmake")
 
 include(VigraAddExternal)
-vigra_add_external(foundation REPO https://github.com/vigralibs/foundation)
+vigra_add_external(core REPO https://github.com/vigralibs/core)
 
 add_library(math INTERFACE)
-TARGET_LINK_LIBRARIES(math INTERFACE foundation)
+TARGET_LINK_LIBRARIES(math INTERFACE core)
 
 target_include_directories(math INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
