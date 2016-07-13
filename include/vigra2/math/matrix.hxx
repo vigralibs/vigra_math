@@ -1115,7 +1115,7 @@ operator+(const ArrayViewND<2, T> &a, const ArrayViewND<2, T> &b)
 }
 
 template <class T>
-inline Matrix<T>
+inline Matrix<T> &&
 operator+(Matrix<T> && a, const ArrayViewND<2, T> &b)
 {
     a += b;
@@ -1123,7 +1123,7 @@ operator+(Matrix<T> && a, const ArrayViewND<2, T> &b)
 }
 
 template <class T>
-inline Matrix<T>
+inline Matrix<T> &&
 operator+(const ArrayViewND<2, T> &a, Matrix<T> && b)
 {
     b += a;
@@ -1131,7 +1131,7 @@ operator+(const ArrayViewND<2, T> &a, Matrix<T> && b)
 }
 
 template <class T>
-inline Matrix<T>
+inline Matrix<T> &&
 operator+(Matrix<T> && a, Matrix<T> && b)
 {
     a += b;
@@ -1153,7 +1153,7 @@ operator+(const ArrayViewND<2, T> &a, T b)
 }
 
 template <class T>
-inline Matrix<T>
+inline Matrix<T> &&
 operator+(Matrix<T> && a, T b)
 {
     a += b;
@@ -1175,7 +1175,7 @@ operator+(T a, const ArrayViewND<2, T> &b)
 }
 
 template <class T>
-inline Matrix<T>
+inline Matrix<T> &&
 operator+(T a, Matrix<T> && b)
 {
     b += a;
@@ -1222,7 +1222,7 @@ operator-(const ArrayViewND<2, T> &a, const ArrayViewND<2, T> &b)
 }
 
 template <class T>
-inline Matrix<T>
+inline Matrix<T> &&
 operator-(Matrix<T> && a, const ArrayViewND<2, T> &b)
 {
     a -= b;
@@ -1230,7 +1230,7 @@ operator-(Matrix<T> && a, const ArrayViewND<2, T> &b)
 }
 
 template <class T>
-Matrix<T>
+Matrix<T> &&
 operator-(const ArrayViewND<2, T> &a, Matrix<T> && b)
 {
     const ArrayIndex rows = rowCount(a);
@@ -1245,7 +1245,7 @@ operator-(const ArrayViewND<2, T> &a, Matrix<T> && b)
 }
 
 template <class T>
-inline Matrix<T>
+inline Matrix<T> &&
 operator-(Matrix<T> && a, Matrix<T> && b)
 {
     a -= b;
@@ -1267,7 +1267,7 @@ operator-(const ArrayViewND<2, T> &a)
 }
 
 template <class T>
-inline Matrix<T>
+inline Matrix<T> &&
 operator-(Matrix<T> && a)
 {
     a *= -NumericTraits<T>::one();
@@ -1289,7 +1289,7 @@ operator-(const ArrayViewND<2, T> &a, T b)
 }
 
 template <class T>
-inline Matrix<T>
+inline Matrix<T> &&
 operator-(Matrix<T> && a, T b)
 {
     a -= b;
@@ -1703,7 +1703,7 @@ operator*(const ArrayViewND<2, T> &a, T b)
 }
 
 template <class T>
-inline Matrix<T>
+inline Matrix<T> &&
 operator*(Matrix<T> && a, T b)
 {
     a *= b;
@@ -1725,7 +1725,7 @@ operator*(T a, const ArrayViewND<2, T> &b)
 }
 
 template <class T>
-inline Matrix<T>
+inline Matrix<T> &&
 operator*(T a, Matrix<T> && b)
 {
     b *= a;
@@ -1894,7 +1894,7 @@ operator/(const ArrayViewND<2, T> &a, T b)
 }
 
 template <class T>
-inline Matrix<T>
+inline Matrix<T> &&
 operator/(Matrix<T> && a, T b)
 {
     a /= b;
@@ -2072,7 +2072,7 @@ pow(ArrayViewND<2, T> const & v, T exponent)
 }
 
 template <class T>
-linalg::Matrix<T>
+linalg::Matrix<T> &&
 pow(linalg::Matrix<T> && t, T exponent)
 {
     ArrayIndex m = rowCount(t), n = columnCount(t);
@@ -2097,7 +2097,7 @@ pow(ArrayViewND<2, T> const & v, int exponent)
 }
 
 template <class T>
-linalg::Matrix<T>
+linalg::Matrix<T> &&
 pow(linalg::Matrix<T> && t, int exponent)
 {
     ArrayIndex m = rowCount(t), n = columnCount(t);
@@ -2122,7 +2122,7 @@ pow(ArrayViewND<2, int> const & v, int exponent)
 }
 
 inline
-linalg::Matrix<int>
+linalg::Matrix<int> &&
 pow(linalg::Matrix<int> && t, int exponent)
 {
     ArrayIndex m = rowCount(t), n = columnCount(t);
@@ -2197,7 +2197,7 @@ linalg::Matrix<T> FUNCTION(ArrayViewND<2, T> const & v) \
 } \
  \
 template <class T> \
-linalg::Matrix<T> FUNCTION(linalg::Matrix<T> && t) \
+linalg::Matrix<T> && FUNCTION(linalg::Matrix<T> && t) \
 { \
     ArrayIndex m = rowCount(t), n = columnCount(t); \
  \
