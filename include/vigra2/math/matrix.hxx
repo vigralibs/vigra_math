@@ -818,7 +818,7 @@ trace(ArrayViewND<2, T> const & m)
     const ArrayIndex size = rowCount(m);
     vigra_precondition(size == columnCount(m), "linalg::trace(): Matrix must be square.");
 
-    SumType sum = NumericTraits<SumType>::zero();
+    SumType sum = SumType();
     for(ArrayIndex i = 0; i < size; ++i)
         sum += m(i, i);
     return sum;
@@ -838,7 +838,7 @@ void identityMatrix(ArrayViewND<2, T> &r)
        "identityMatrix(): Matrix must be square.");
     for(ArrayIndex i = 0; i < rows; ++i) {
         for(ArrayIndex j = 0; j < rows; ++j)
-            r(j, i) = NumericTraits<T>::zero();
+            r(j, i) = T();
         r(i, i) = NumericTraits<T>::one();
     }
 }
@@ -1323,11 +1323,10 @@ operator-(T a, const ArrayViewND<2, T> &b)
         Namespaces: vigra and vigra::linalg
      */
 template <class T>
-typename NormTraits<T>::SquaredNormType
+SquaredNormType<T>
 dot(const ArrayViewND<2, T> &x, const ArrayViewND<2, T> &y)
 {
-    typename NormTraits<T>::SquaredNormType ret =
-           NumericTraits<typename NormTraits<T>::SquaredNormType>::zero();
+    auto ret = SquaredNormType<T>();
     if(y.shape(1) == 1)
     {
         std::ptrdiff_t size = y.shape(0);
@@ -1365,14 +1364,13 @@ dot(const ArrayViewND<2, T> &x, const ArrayViewND<2, T> &y)
         Namespaces: vigra and vigra::linalg
      */
 template <class T>
-typename NormTraits<T>::SquaredNormType
+SquaredNormType<T>
 dot(const ArrayViewND<1, T> &x, const ArrayViewND<1, T> &y)
 {
     const ArrayIndex n = x.elementCount();
     vigra_precondition(n == y.elementCount(),
        "dot(): shape mismatch.");
-    typename NormTraits<T>::SquaredNormType ret =
-                NumericTraits<typename NormTraits<T>::SquaredNormType>::zero();
+    auto ret = SquaredNormType<T>();
     for(ArrayIndex i = 0; i < n; ++i)
         ret += x(i) * y(i);
     return ret;
@@ -2235,8 +2233,6 @@ VIGRA_MATRIX_UNARY_FUNCTION(sign, vigra)
 
 } // namespace linalg
 
-using linalg::RowMajor;
-using linalg::ColumnMajor;
 using linalg::Matrix;
 using linalg::identityMatrix;
 using linalg::eye;
@@ -2257,6 +2253,7 @@ using linalg::subVector;
 using linalg::isSymmetric;
 using linalg::joinHorizontally;
 using linalg::joinVertically;
+using linalg::repeatMatrix;
 using linalg::argMin;
 using linalg::argMinIf;
 using linalg::argMax;
@@ -2317,12 +2314,12 @@ columnStatisticsImpl(ArrayViewND<2, T1> const & A,
                        "columnStatistics(): Shape mismatch between input and output.");
 
     // West's algorithm for incremental variance computation
-    mean.init(NumericTraits<T2>::zero());
-    sumOfSquaredDifferences.init(NumericTraits<T3>::zero());
+    mean = T2();
+    sumOfSquaredDifferences = T3();
 
     for(ArrayIndex k=0; k<m; ++k)
     {
-        typedef typename NumericTraits<T2>::RealPromote TmpType;
+        typedef RealPromoteType<T2> TmpType;
         Matrix<T2> t = rowVector(A, k) - mean;
         TmpType f  = TmpType(1.0 / (k + 1.0)),
                 f1 = TmpType(1.0 - f);
@@ -2343,14 +2340,14 @@ columnStatistics2PassImpl(ArrayViewND<2, T1> const & A,
                        "columnStatistics(): Shape mismatch between input and output.");
 
     // two-pass algorithm for incremental variance computation
-    mean.init(NumericTraits<T2>::zero());
+    mean = T2();
     for(ArrayIndex k=0; k<m; ++k)
     {
         mean += rowVector(A, k);
     }
     mean /= static_cast<double>(m);
 
-    sumOfSquaredDifferences.init(NumericTraits<T3>::zero());
+    sumOfSquaredDifferences = T3();
     for(ArrayIndex k=0; k<m; ++k)
     {
         sumOfSquaredDifferences += sq(rowVector(A, k) - mean);
@@ -2428,7 +2425,7 @@ columnStatistics(ArrayViewND<2, T1> const & A,
     vigra_precondition(1 == rowCount(mean) && n == columnCount(mean),
                        "columnStatistics(): Shape mismatch between input and output.");
 
-    mean.init(NumericTraits<T2>::zero());
+    mean.init(T2());
 
     for(ArrayIndex k=0; k<m; ++k)
     {
@@ -2524,39 +2521,39 @@ doxygen_overloaded_function(template <...> void rowStatistics)
 template <class T1, class T2>
 void
 rowStatistics(ArrayViewND<2, T1> const & A,
-                 ArrayViewND<2, T2> & mean)
+              ArrayViewND<2, T2> & mean)
 {
     vigra_precondition(1 == columnCount(mean) && rowCount(A) == rowCount(mean),
                        "rowStatistics(): Shape mismatch between input and output.");
-    ArrayViewND<2, T2, StridedArrayTag> tm = transpose(mean);
+    auto tm = transpose(mean);
     columnStatistics(transpose(A), tm);
 }
 
 template <class T1, class T2, class T3>
 void
 rowStatistics(ArrayViewND<2, T1> const & A,
-                 ArrayViewND<2, T2> & mean, ArrayViewND<2, T3> & stdDev)
+              ArrayViewND<2, T2> & mean, ArrayViewND<2, T3> & stdDev)
 {
     vigra_precondition(1 == columnCount(mean) && rowCount(A) == rowCount(mean) &&
                        1 == columnCount(stdDev) && rowCount(A) == rowCount(stdDev),
                        "rowStatistics(): Shape mismatch between input and output.");
-    ArrayViewND<2, T2, StridedArrayTag> tm = transpose(mean);
-    ArrayViewND<2, T3, StridedArrayTag> ts = transpose(stdDev);
+    auto tm = transpose(mean);
+    auto ts = transpose(stdDev);
     columnStatistics(transpose(A), tm, ts);
 }
 
 template <class T1, class T2, class T3, class T4>
 void
 rowStatistics(ArrayViewND<2, T1> const & A,
-                 ArrayViewND<2, T2> & mean, ArrayViewND<2, T3> & stdDev, ArrayViewND<2, T4> & norm)
+              ArrayViewND<2, T2> & mean, ArrayViewND<2, T3> & stdDev, ArrayViewND<2, T4> & norm)
 {
     vigra_precondition(1 == columnCount(mean) && rowCount(A) == rowCount(mean) &&
                        1 == columnCount(stdDev) && rowCount(A) == rowCount(stdDev) &&
                        1 == columnCount(norm) && rowCount(A) == rowCount(norm),
                        "rowStatistics(): Shape mismatch between input and output.");
-    ArrayViewND<2, T2, StridedArrayTag> tm = transpose(mean);
-    ArrayViewND<2, T3, StridedArrayTag> ts = transpose(stdDev);
-    ArrayViewND<2, T4, StridedArrayTag> tn = transpose(norm);
+    auto tm = transpose(mean);
+    auto ts = transpose(stdDev);
+    auto tn = transpose(norm);
     columnStatistics(transpose(A), tm, ts, tn);
 }
 
@@ -2626,7 +2623,7 @@ void covarianceMatrixOfColumns(ArrayViewND<2, T1> const & features,
           "covarianceMatrixOfColumns(): Shape mismatch between feature matrix and covariance matrix.");
     ArrayIndex count = 0;
     Matrix<T2> means(1, n);
-    covariance.init(NumericTraits<T2>::zero());
+    covariance.init(T2());
     for(ArrayIndex k=0; k<m; ++k)
         detail::updateCovarianceMatrix(rowVector(features, k), count, means, covariance);
     covariance /= T2(m - 1);
@@ -2666,7 +2663,7 @@ void covarianceMatrixOfRows(ArrayViewND<2, T1> const & features,
           "covarianceMatrixOfRows(): Shape mismatch between feature matrix and covariance matrix.");
     ArrayIndex count = 0;
     Matrix<T2> means(m, 1);
-    covariance.init(NumericTraits<T2>::zero());
+    covariance = T2();
     for(ArrayIndex k=0; k<n; ++k)
         detail::updateCovarianceMatrix(columnVector(features, k), count, means, covariance);
     covariance /= T2(n - 1);
@@ -2714,7 +2711,7 @@ prepareDataImpl(const ArrayViewND<2, T> & A,
     if(!goals)
     {
         res = A;
-        offset.init(NumericTraits<T>::zero());
+        offset.init(T());
         scaling.init(NumericTraits<T>::one());
         return;
     }
@@ -2729,13 +2726,13 @@ prepareDataImpl(const ArrayViewND<2, T> & A,
         vigra_precondition(goals == UnitSum,
              "prepareData(): Unit sum is not compatible with any other data preparation goal.");
 
-        transformMultiArray(srcMultiArrayRange(A), destMultiArrayRange(scaling), FindSum<T>());
+        A.sum(scaling);
 
-        offset.init(NumericTraits<T>::zero());
+        offset.init(T());
 
         for(ArrayIndex k=0; k<n; ++k)
         {
-            if(scaling(0, k) != NumericTraits<T>::zero())
+            if(scaling(0, k) != T())
             {
                 scaling(0, k) = NumericTraits<T>::one() / scaling(0, k);
                 columnVector(res, k) = columnVector(A, k) * scaling(0, k);
@@ -2758,29 +2755,29 @@ prepareDataImpl(const ArrayViewND<2, T> & A,
     for(ArrayIndex k=0; k<n; ++k)
     {
         T stdDev = std::sqrt(sumOfSquaredDifferences(0, k) / T(m-1));
-        if(closeAtTolerance(stdDev / mean(0,k), NumericTraits<T>::zero()))
-            stdDev = NumericTraits<T>::zero();
-        if(zeroMean && stdDev > NumericTraits<T>::zero())
+        if(closeAtTolerance(stdDev / mean(0,k), T()))
+            stdDev = T();
+        if(zeroMean && stdDev > T())
         {
             columnVector(res, k) = columnVector(A, k) - mean(0,k);
             offset(0, k) = mean(0, k);
-            mean(0, k) = NumericTraits<T>::zero();
+            mean(0, k) = T();
         }
         else
         {
             columnVector(res, k) = columnVector(A, k);
-            offset(0, k) = NumericTraits<T>::zero();
+            offset(0, k) = T();
         }
 
-        T norm = mean(0,k) == NumericTraits<T>::zero()
+        T norm = mean(0,k) == T()
                   ? std::sqrt(sumOfSquaredDifferences(0, k))
                   : std::sqrt(sumOfSquaredDifferences(0, k) + T(m) * sq(mean(0,k)));
-        if(unitNorm && norm > NumericTraits<T>::zero())
+        if(unitNorm && norm > T())
         {
             columnVector(res, k) /= norm;
             scaling(0, k) = NumericTraits<T>::one() / norm;
         }
-        else if(unitVariance && stdDev > NumericTraits<T>::zero())
+        else if(unitVariance && stdDev > T())
         {
             columnVector(res, k) /= stdDev;
             scaling(0, k) = NumericTraits<T>::one() / stdDev;
@@ -2951,7 +2948,7 @@ prepareRows(ArrayViewND<2, T> const & A,
             ArrayViewND<2, T> & res, ArrayViewND<2, T> & offset, ArrayViewND<2, T> & scaling,
             DataPreparationGoals goals = ZeroMean | UnitVariance)
 {
-    ArrayViewND<2, T, StridedArrayTag> tr = transpose(res), to = transpose(offset), ts = transpose(scaling);
+    auto tr = transpose(res), to = transpose(offset), ts = transpose(scaling);
     detail::prepareDataImpl(transpose(A), tr, to, ts, goals);
 }
 
@@ -2960,7 +2957,7 @@ inline void
 prepareRows(ArrayViewND<2, T> const & A, ArrayViewND<2, T> & res,
             DataPreparationGoals goals = ZeroMean | UnitVariance)
 {
-    ArrayViewND<2, T, StridedArrayTag> tr = transpose(res);
+    auto tr = transpose(res);
     Matrix<T> offset(1, rowCount(A)), scaling(1, rowCount(A));
     detail::prepareDataImpl(transpose(A), tr, offset, scaling, goals);
 }
@@ -2969,8 +2966,10 @@ prepareRows(ArrayViewND<2, T> const & A, ArrayViewND<2, T> & res,
 
 } // namespace linalg
 
+using linalg::covarianceMatrixOfColumns;
 using linalg::columnStatistics;
 using linalg::prepareColumns;
+using linalg::covarianceMatrixOfRows;
 using linalg::rowStatistics;
 using linalg::prepareRows;
 using linalg::ZeroMean;

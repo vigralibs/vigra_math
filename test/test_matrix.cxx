@@ -39,6 +39,9 @@
 #include <random>
 #include <vigra2/unittest.hxx>
 #include <vigra2/math/matrix.hxx>
+// #include <vigra2/linear_algebra.hxx>
+// #include <vigra2/singular_value_decomposition.hxx>
+// #include <vigra2/regression.hxx>
 
 using namespace vigra;
 
@@ -59,19 +62,13 @@ struct MatrixTest
     , random_double_(-1.0, 1.0)
     {}
 
-    // void testOStreamShifting()
-    // {
-        // Matrix a = random_matrix (size, size);
-        // std::ostringstream out;
-        // out << a;
-        // out << "Testing.." << a << 42 << std::endl;
-    // }
-
-    // double random_double ()
-    // {
-        // double ret = 2.0 * random_.uniform53() - 1.0;
-        // return ret;
-    // }
+     void testOStreamShifting()
+     {
+         Matrix a = random_matrix (size, size);
+         std::ostringstream out;
+         out << a;
+         out << "Testing.." << a << 42 << std::endl;
+     }
 
      Matrix random_matrix(unsigned int rows, unsigned int cols)
      {
@@ -415,227 +412,224 @@ struct MatrixTest
          shouldEqual(argMaxIf(minmax, [](double v) { return v < -2.0; }), -1);
      }
 
-    // void testColumnAndRowStatistics()
-    // {
-        // double epsilon = 1e-11;
+     void testColumnAndRowStatistics()
+     {
+         double epsilon = 1e-10;
 
-        // Matrix rowMean(size, 1), columnMean(1, size);
-        // Matrix rowStdDev(size, 1), columnStdDev(1, size);
-        // Matrix rowNorm(size, 1), columnNorm(1, size);
-        // Matrix rowCovariance(size, size), columnCovariance(size, size);
+         Matrix rowMean(size, 1), columnMean(1, size);
+         Matrix rowStdDev(size, 1), columnStdDev(1, size);
+         Matrix rowNorm(size, 1), columnNorm(1, size);
+         Matrix rowCovariance(size, size), columnCovariance(size, size);
 
-        // for(unsigned int i = 0; i < iterations; ++i)
-        // {
-            // Matrix a = random_matrix (size, size);
+         for(unsigned int i = 0; i < iterations; ++i)
+         {
+             Matrix a = random_matrix (size, size);
 
-            // rowStatistics(a, rowMean, rowStdDev, rowNorm);
-            // columnStatistics(a, columnMean, columnStdDev, columnNorm);
+             rowStatistics(a, rowMean, rowStdDev, rowNorm);
+             columnStatistics(a, columnMean, columnStdDev, columnNorm);
 
-            // for(unsigned int k=0; k<size; ++k)
-            // {
-                // double rm = 0.0, cm = 0.0, rn = 0.0, cn = 0.0, rs = 0.0, cs = 0.0;
-                // for(unsigned int l=0; l<size; ++l)
-                // {
-                    // rm += a(k, l);
-                    // cm += a(l, k);
-                    // rn += sq(a(k, l));
-                    // cn += sq(a(l, k));
-                // }
-                // rm /= size;
-                // cm /= size;
-                // rn = std::sqrt(rn);
-                // cn = std::sqrt(cn);
+             for(unsigned int k=0; k<size; ++k)
+             {
+                 double rm = 0.0, cm = 0.0, rn = 0.0, cn = 0.0, rs = 0.0, cs = 0.0;
+                 for(unsigned int l=0; l<size; ++l)
+                 {
+                     rm += a(k, l);
+                     cm += a(l, k);
+                     rn += sq(a(k, l));
+                     cn += sq(a(l, k));
+                 }
+                 rm /= size;
+                 cm /= size;
+                 rn = sqrt(rn);
+                 cn = sqrt(cn);
 
-                // shouldEqualTolerance(rm, rowMean(k,0), epsilon);
-                // shouldEqualTolerance(cm, columnMean(0,k), epsilon);
-                // shouldEqualTolerance(rn, rowNorm(k,0), epsilon);
-                // shouldEqualTolerance(cn, columnNorm(0,k), epsilon);
+                 shouldEqualTolerance(rm, rowMean(k,0), epsilon);
+                 shouldEqualTolerance(cm, columnMean(0,k), epsilon);
+                 shouldEqualTolerance(rn, rowNorm(k,0), epsilon);
+                 shouldEqualTolerance(cn, columnNorm(0,k), epsilon);
 
-                // for(unsigned int l=0; l<size; ++l)
-                // {
-                    // rs += sq(a(k, l) - rm);
-                    // cs += sq(a(l, k) - cm);
-                // }
-                // rs = std::sqrt(rs / (size-1));
-                // cs = std::sqrt(cs / (size-1));
+                 for(unsigned int l=0; l<size; ++l)
+                 {
+                     rs += sq(a(k, l) - rm);
+                     cs += sq(a(l, k) - cm);
+                 }
+                 rs = sqrt(rs / (size-1));
+                 cs = sqrt(cs / (size-1));
 
-                // shouldEqualTolerance(rs, rowStdDev(k,0), epsilon);
-                // shouldEqualTolerance(cs, columnStdDev(0,k), epsilon);
-            // }
+                 shouldEqualTolerance(rs, rowStdDev(k,0), epsilon);
+                 shouldEqualTolerance(cs, columnStdDev(0,k), epsilon);
+             }
 
-            // covarianceMatrixOfRows(a, rowCovariance);
-            // covarianceMatrixOfColumns(a, columnCovariance);
-            // Matrix rowCovarianceRef(size, size), columnCovarianceRef(size, size);
-            // for(unsigned int k=0; k<size; ++k)
-            // {
-                // for(unsigned int l=0; l<size; ++l)
-                // {
-                    // for(unsigned int m=0; m<size; ++m)
-                    // {
-                        // rowCovarianceRef(l, m) += (a(l, k) - rowMean(l, 0)) * (a(m, k) - rowMean(m, 0));
-                        // columnCovarianceRef(l, m) += (a(k, l) - columnMean(0, l)) * (a(k, m) - columnMean(0, m));
-                    // }
-                // }
-            // }
-            // rowCovarianceRef /= (size-1);
-            // columnCovarianceRef /= (size-1);
+             covarianceMatrixOfRows(a, rowCovariance);
+             covarianceMatrixOfColumns(a, columnCovariance);
+             Matrix rowCovarianceRef(size, size), columnCovarianceRef(size, size);
+             for(unsigned int k=0; k<size; ++k)
+             {
+                 for(unsigned int l=0; l<size; ++l)
+                 {
+                     for(unsigned int m=0; m<size; ++m)
+                     {
+                         rowCovarianceRef(l, m) += (a(l, k) - rowMean(l, 0)) * (a(m, k) - rowMean(m, 0));
+                         columnCovarianceRef(l, m) += (a(k, l) - columnMean(0, l)) * (a(k, m) - columnMean(0, m));
+                     }
+                 }
+             }
+             rowCovarianceRef /= (size-1);
+             columnCovarianceRef /= (size-1);
 
-            // shouldEqualSequenceTolerance(rowCovariance.data(), rowCovariance.data()+size*size, rowCovarianceRef.data(), epsilon);
-            // shouldEqualSequenceTolerance(columnCovariance.data(), columnCovariance.data()+size*size, columnCovarianceRef.data(), epsilon);
-        // }
-    // }
+             shouldEqualSequenceTolerance(rowCovariance.begin(), rowCovariance.end(), rowCovarianceRef.begin(), epsilon);
+             shouldEqualSequenceTolerance(columnCovariance.begin(), columnCovariance.end(), columnCovarianceRef.begin(), epsilon);
+         }
+     }
 
-    // void testColumnAndRowPreparation()
-    // {
-        // using ZeroMean;
-        // using UnitVariance;
-        // using UnitNorm;
-        // using UnitSum;
+     void testColumnAndRowPreparation()
+     {
+         using namespace linalg;
 
-        // double epsilon = 1e-11;
+         double epsilon = 1e-11;
 
-        // Matrix rowMean(size, 1), columnMean(1, size);
-        // Matrix rowStdDev(size, 1), columnStdDev(1, size);
-        // Matrix rowNorm(size, 1), columnNorm(1, size);
+         Matrix rowMean(size, 1), columnMean(1, size);
+         Matrix rowStdDev(size, 1), columnStdDev(1, size);
+         Matrix rowNorm(size, 1), columnNorm(1, size);
 
-        // Matrix rowPrepared(size, size), columnPrepared(size, size);
-        // Matrix rowMeanPrepared(size, 1), columnMeanPrepared(1, size);
-        // Matrix rowStdDevPrepared(size, 1), columnStdDevPrepared(1, size);
-        // Matrix rowNormPrepared(size, 1), columnNormPrepared(1, size);
-        // Matrix rowOffset(size, 1), columnOffset(1, size);
-        // Matrix rowScaling(size, 1), columnScaling(1, size);
+         Matrix rowPrepared(size, size), columnPrepared(size, size);
+         Matrix rowMeanPrepared(size, 1), columnMeanPrepared(1, size);
+         Matrix rowStdDevPrepared(size, 1), columnStdDevPrepared(1, size);
+         Matrix rowNormPrepared(size, 1), columnNormPrepared(1, size);
+         Matrix rowOffset(size, 1), columnOffset(1, size);
+         Matrix rowScaling(size, 1), columnScaling(1, size);
 
-        // Matrix zeroRowRef(size,1), zeroColRef(1, size);
-        // Matrix oneRowRef(size,1), oneColRef(1, size);
-        // oneRowRef.init(1.0);
-        // oneColRef.init(1.0);
+         Matrix zeroRowRef(size,1), zeroColRef(1, size);
+         Matrix oneRowRef(size,1), oneColRef(1, size);
+         oneRowRef.init(1.0);
+         oneColRef.init(1.0);
 
-        // {
-            // Matrix a = random_matrix (size, size);
+         {
+             Matrix a = random_matrix (size, size);
 
-            // columnStatistics(a, columnMean, columnStdDev, columnNorm);
+             columnStatistics(a, columnMean, columnStdDev, columnNorm);
 
-            // prepareColumns(a, columnPrepared, columnOffset, columnScaling, UnitSum);
-            // shouldEqualSequence(zeroColRef.data(), zeroColRef.data()+size, columnOffset.data());
-            // columnScaling *= columnMean;
-            // columnScaling *= size;
-            // shouldEqualSequenceTolerance(oneColRef.data(), oneColRef.data()+size, columnScaling.data(), epsilon);
-            // columnStatistics(columnPrepared, columnMeanPrepared, columnStdDevPrepared, columnNormPrepared);
-            // columnMeanPrepared *= size;
-            // shouldEqualSequenceTolerance(oneColRef.data(), oneColRef.data()+size, columnMeanPrepared.data(), epsilon);
+             prepareColumns(a, columnPrepared, columnOffset, columnScaling, UnitSum);
+             shouldEqualSequence(zeroColRef.begin(), zeroColRef.end(), columnOffset.begin());
+             columnScaling *= columnMean;
+             columnScaling *= size;
+             shouldEqualSequenceTolerance(oneColRef.begin(), oneColRef.end(), columnScaling.begin(), epsilon);
+             columnStatistics(columnPrepared, columnMeanPrepared, columnStdDevPrepared, columnNormPrepared);
+             columnMeanPrepared *= size;
+             shouldEqualSequenceTolerance(oneColRef.begin(), oneColRef.end(), columnMeanPrepared.begin(), epsilon);
 
-            // prepareColumns(a, columnPrepared, columnOffset, columnScaling, ZeroMean);
-            // columnStatistics(columnPrepared, columnMeanPrepared, columnStdDevPrepared, columnNormPrepared);
-            // shouldEqualSequenceTolerance(zeroColRef.data(), zeroColRef.data()+size, columnMeanPrepared.data(), epsilon);
-            // shouldEqualSequenceTolerance(columnStdDev.data(), columnStdDev.data()+size, columnStdDevPrepared.data(), epsilon);
+             prepareColumns(a, columnPrepared, columnOffset, columnScaling, ZeroMean);
+             columnStatistics(columnPrepared, columnMeanPrepared, columnStdDevPrepared, columnNormPrepared);
+             shouldEqualSequenceTolerance(zeroColRef.begin(), zeroColRef.end(), columnMeanPrepared.begin(), epsilon);
+             shouldEqualSequenceTolerance(columnStdDev.begin(), columnStdDev.end(), columnStdDevPrepared.begin(), epsilon);
 
-            // Matrix ap = columnPrepared / pointWise(repeatMatrix(columnScaling, size, 1)) + repeatMatrix(columnOffset, size, 1);
-            // shouldEqualSequenceTolerance(a.data(), a.data()+size*size, ap.data(), epsilon);
+             Matrix ap = columnPrepared / pointWise(repeatMatrix(columnScaling, size, 1)) + repeatMatrix(columnOffset, size, 1);
+             shouldEqualSequenceTolerance(a.begin(), a.end(), ap.begin(), epsilon);
 
-            // prepareColumns(a, columnPrepared, columnOffset, columnScaling, UnitNorm);
-            // columnStatistics(columnPrepared, columnMeanPrepared, columnStdDevPrepared, columnNormPrepared);
-            // shouldEqualSequenceTolerance(oneColRef.data(), oneColRef.data()+size, columnNormPrepared.data(), epsilon);
+             prepareColumns(a, columnPrepared, columnOffset, columnScaling, UnitNorm);
+             columnStatistics(columnPrepared, columnMeanPrepared, columnStdDevPrepared, columnNormPrepared);
+             shouldEqualSequenceTolerance(oneColRef.begin(), oneColRef.end(), columnNormPrepared.begin(), epsilon);
 
-            // ap = columnPrepared / pointWise(repeatMatrix(columnScaling, size, 1)) + repeatMatrix(columnOffset, size, 1);
-            // shouldEqualSequenceTolerance(a.data(), a.data()+size*size, ap.data(), epsilon);
+             ap = columnPrepared / pointWise(repeatMatrix(columnScaling, size, 1)) + repeatMatrix(columnOffset, size, 1);
+             shouldEqualSequenceTolerance(a.begin(), a.end(), ap.begin(), epsilon);
 
-            // prepareColumns(a, columnPrepared, columnOffset, columnScaling, UnitVariance);
-            // columnStatistics(columnPrepared, columnMeanPrepared, columnStdDevPrepared, columnNormPrepared);
-            // columnMeanPrepared /= columnScaling;
-            // shouldEqualSequenceTolerance(columnMean.data(), columnMean.data()+size, columnMeanPrepared.data(), epsilon);
-            // shouldEqualSequenceTolerance(oneColRef.data(), oneColRef.data()+size, columnStdDevPrepared.data(), epsilon);
+             prepareColumns(a, columnPrepared, columnOffset, columnScaling, UnitVariance);
+             columnStatistics(columnPrepared, columnMeanPrepared, columnStdDevPrepared, columnNormPrepared);
+             columnMeanPrepared /= columnScaling;
+             shouldEqualSequenceTolerance(columnMean.begin(), columnMean.end(), columnMeanPrepared.begin(), epsilon);
+             shouldEqualSequenceTolerance(oneColRef.begin(), oneColRef.end(), columnStdDevPrepared.begin(), epsilon);
 
-            // ap = columnPrepared / pointWise(repeatMatrix(columnScaling, size, 1)) + repeatMatrix(columnOffset, size, 1);
-            // shouldEqualSequenceTolerance(a.data(), a.data()+size*size, ap.data(), epsilon);
+             ap = columnPrepared / pointWise(repeatMatrix(columnScaling, size, 1)) + repeatMatrix(columnOffset, size, 1);
+             shouldEqualSequenceTolerance(a.begin(), a.end(), ap.begin(), epsilon);
 
-            // prepareColumns(a, columnPrepared, columnOffset, columnScaling, ZeroMean | UnitVariance);
-            // columnStatistics(columnPrepared, columnMeanPrepared, columnStdDevPrepared, columnNormPrepared);
-            // shouldEqualSequenceTolerance(zeroColRef.data(), zeroColRef.data()+size, columnMeanPrepared.data(), epsilon);
-            // shouldEqualSequenceTolerance(oneColRef.data(), oneColRef.data()+size, columnStdDevPrepared.data(), epsilon);
+             prepareColumns(a, columnPrepared, columnOffset, columnScaling, ZeroMean | UnitVariance);
+             columnStatistics(columnPrepared, columnMeanPrepared, columnStdDevPrepared, columnNormPrepared);
+             shouldEqualSequenceTolerance(zeroColRef.begin(), zeroColRef.end(), columnMeanPrepared.begin(), epsilon);
+             shouldEqualSequenceTolerance(oneColRef.begin(), oneColRef.end(), columnStdDevPrepared.begin(), epsilon);
 
-            // ap = columnPrepared / pointWise(repeatMatrix(columnScaling, size, 1)) + repeatMatrix(columnOffset, size, 1);
-            // shouldEqualSequenceTolerance(a.data(), a.data()+size*size, ap.data(), epsilon);
+             ap = columnPrepared / pointWise(repeatMatrix(columnScaling, size, 1)) + repeatMatrix(columnOffset, size, 1);
+             shouldEqualSequenceTolerance(a.begin(), a.end(), ap.begin(), epsilon);
 
-            // prepareColumns(a, columnPrepared, columnOffset, columnScaling, ZeroMean | UnitNorm);
-            // columnStatistics(columnPrepared, columnMeanPrepared, columnStdDevPrepared, columnNormPrepared);
-            // shouldEqualSequenceTolerance(zeroColRef.data(), zeroColRef.data()+size, columnMeanPrepared.data(), epsilon);
-            // shouldEqualSequenceTolerance(oneColRef.data(), oneColRef.data()+size, columnNormPrepared.data(), epsilon);
+             prepareColumns(a, columnPrepared, columnOffset, columnScaling, ZeroMean | UnitNorm);
+             columnStatistics(columnPrepared, columnMeanPrepared, columnStdDevPrepared, columnNormPrepared);
+             shouldEqualSequenceTolerance(zeroColRef.begin(), zeroColRef.end(), columnMeanPrepared.begin(), epsilon);
+             shouldEqualSequenceTolerance(oneColRef.begin(), oneColRef.end(), columnNormPrepared.begin(), epsilon);
 
-            // ap = columnPrepared / pointWise(repeatMatrix(columnScaling, size, 1)) + repeatMatrix(columnOffset, size, 1);
-            // shouldEqualSequenceTolerance(a.data(), a.data()+size*size, ap.data(), epsilon);
+             ap = columnPrepared / pointWise(repeatMatrix(columnScaling, size, 1)) + repeatMatrix(columnOffset, size, 1);
+             shouldEqualSequenceTolerance(a.begin(), a.end(), ap.begin(), epsilon);
 
-            // rowStatistics(a, rowMean, rowStdDev, rowNorm);
+             rowStatistics(a, rowMean, rowStdDev, rowNorm);
 
-            // prepareRows(a, rowPrepared, rowOffset, rowScaling, UnitSum);
-            // shouldEqualSequence(zeroRowRef.data(), zeroRowRef.data()+size, rowOffset.data());
-            // rowScaling *= rowMean;
-            // rowScaling *= size;
-            // shouldEqualSequenceTolerance(oneRowRef.data(), oneRowRef.data()+size, rowScaling.data(), epsilon);
-            // rowStatistics(rowPrepared, rowMeanPrepared, rowStdDevPrepared, rowNormPrepared);
-            // rowMeanPrepared *= size;
-            // shouldEqualSequenceTolerance(oneRowRef.data(), oneRowRef.data()+size, rowMeanPrepared.data(), epsilon);
+             prepareRows(a, rowPrepared, rowOffset, rowScaling, UnitSum);
+             shouldEqualSequence(zeroRowRef.begin(), zeroRowRef.end(), rowOffset.begin());
+             rowScaling *= rowMean;
+             rowScaling *= size;
+             shouldEqualSequenceTolerance(oneRowRef.begin(), oneRowRef.end(), rowScaling.begin(), epsilon);
+             rowStatistics(rowPrepared, rowMeanPrepared, rowStdDevPrepared, rowNormPrepared);
+             rowMeanPrepared *= size;
+             shouldEqualSequenceTolerance(oneRowRef.begin(), oneRowRef.end(), rowMeanPrepared.begin(), epsilon);
 
-            // prepareRows(a, rowPrepared, rowOffset, rowScaling, ZeroMean);
-            // rowStatistics(rowPrepared, rowMeanPrepared, rowStdDevPrepared, rowNormPrepared);
-            // shouldEqualSequenceTolerance(zeroRowRef.data(), zeroRowRef.data()+size, rowMeanPrepared.data(), epsilon);
-            // shouldEqualSequenceTolerance(rowStdDev.data(), rowStdDev.data()+size, rowStdDevPrepared.data(), epsilon);
+             prepareRows(a, rowPrepared, rowOffset, rowScaling, ZeroMean);
+             rowStatistics(rowPrepared, rowMeanPrepared, rowStdDevPrepared, rowNormPrepared);
+             shouldEqualSequenceTolerance(zeroRowRef.begin(), zeroRowRef.end(), rowMeanPrepared.begin(), epsilon);
+             shouldEqualSequenceTolerance(rowStdDev.begin(), rowStdDev.end(), rowStdDevPrepared.begin(), epsilon);
 
-            // ap = rowPrepared / pointWise(repeatMatrix(rowScaling, 1, size)) + repeatMatrix(rowOffset, 1, size);
-            // shouldEqualSequenceTolerance(a.data(), a.data()+size*size, ap.data(), epsilon);
+             ap = rowPrepared / pointWise(repeatMatrix(rowScaling, 1, size)) + repeatMatrix(rowOffset, 1, size);
+             shouldEqualSequenceTolerance(a.begin(), a.end(), ap.begin(), epsilon);
 
-            // prepareRows(a, rowPrepared, rowOffset, rowScaling, UnitNorm);
-            // rowStatistics(rowPrepared, rowMeanPrepared, rowStdDevPrepared, rowNormPrepared);
-            // shouldEqualSequenceTolerance(oneRowRef.data(), oneRowRef.data()+size, rowNormPrepared.data(), epsilon);
+             prepareRows(a, rowPrepared, rowOffset, rowScaling, UnitNorm);
+             rowStatistics(rowPrepared, rowMeanPrepared, rowStdDevPrepared, rowNormPrepared);
+             shouldEqualSequenceTolerance(oneRowRef.begin(), oneRowRef.end(), rowNormPrepared.begin(), epsilon);
 
-            // ap = rowPrepared / pointWise(repeatMatrix(rowScaling, 1, size)) + repeatMatrix(rowOffset, 1, size);
-            // shouldEqualSequenceTolerance(a.data(), a.data()+size*size, ap.data(), epsilon);
+             ap = rowPrepared / pointWise(repeatMatrix(rowScaling, 1, size)) + repeatMatrix(rowOffset, 1, size);
+             shouldEqualSequenceTolerance(a.begin(), a.end(), ap.begin(), epsilon);
 
-            // prepareRows(a, rowPrepared, rowOffset, rowScaling, UnitVariance);
-            // rowStatistics(rowPrepared, rowMeanPrepared, rowStdDevPrepared, rowNormPrepared);
-            // rowMeanPrepared /= rowScaling;
-            // shouldEqualSequenceTolerance(rowMean.data(), rowMean.data()+size, rowMeanPrepared.data(), epsilon);
-            // shouldEqualSequenceTolerance(oneRowRef.data(), oneRowRef.data()+size, rowStdDevPrepared.data(), epsilon);
+             prepareRows(a, rowPrepared, rowOffset, rowScaling, UnitVariance);
+             rowStatistics(rowPrepared, rowMeanPrepared, rowStdDevPrepared, rowNormPrepared);
+             rowMeanPrepared /= rowScaling;
+             shouldEqualSequenceTolerance(rowMean.begin(), rowMean.end(), rowMeanPrepared.begin(), epsilon);
+             shouldEqualSequenceTolerance(oneRowRef.begin(), oneRowRef.end(), rowStdDevPrepared.begin(), epsilon);
 
-            // ap = rowPrepared / pointWise(repeatMatrix(rowScaling, 1, size)) + repeatMatrix(rowOffset, 1, size);
-            // shouldEqualSequenceTolerance(a.data(), a.data()+size*size, ap.data(), epsilon);
+             ap = rowPrepared / pointWise(repeatMatrix(rowScaling, 1, size)) + repeatMatrix(rowOffset, 1, size);
+             shouldEqualSequenceTolerance(a.begin(), a.end(), ap.begin(), epsilon);
 
-            // prepareRows(a, rowPrepared, rowOffset, rowScaling, ZeroMean | UnitVariance);
-            // rowStatistics(rowPrepared, rowMeanPrepared, rowStdDevPrepared, rowNormPrepared);
-            // shouldEqualSequenceTolerance(zeroRowRef.data(), zeroRowRef.data()+size, rowMeanPrepared.data(), epsilon);
-            // shouldEqualSequenceTolerance(oneRowRef.data(), oneRowRef.data()+size, rowStdDevPrepared.data(), epsilon);
+             prepareRows(a, rowPrepared, rowOffset, rowScaling, ZeroMean | UnitVariance);
+             rowStatistics(rowPrepared, rowMeanPrepared, rowStdDevPrepared, rowNormPrepared);
+             shouldEqualSequenceTolerance(zeroRowRef.begin(), zeroRowRef.end(), rowMeanPrepared.begin(), epsilon);
+             shouldEqualSequenceTolerance(oneRowRef.begin(), oneRowRef.end(), rowStdDevPrepared.begin(), epsilon);
 
-            // ap = rowPrepared / pointWise(repeatMatrix(rowScaling, 1, size)) + repeatMatrix(rowOffset, 1, size);
-            // shouldEqualSequenceTolerance(a.data(), a.data()+size*size, ap.data(), epsilon);
+             ap = rowPrepared / pointWise(repeatMatrix(rowScaling, 1, size)) + repeatMatrix(rowOffset, 1, size);
+             shouldEqualSequenceTolerance(a.begin(), a.end(), ap.begin(), epsilon);
 
-            // prepareRows(a, rowPrepared, rowOffset, rowScaling, ZeroMean | UnitNorm);
-            // rowStatistics(rowPrepared, rowMeanPrepared, rowStdDevPrepared, rowNormPrepared);
-            // shouldEqualSequenceTolerance(zeroRowRef.data(), zeroRowRef.data()+size, rowMeanPrepared.data(), epsilon);
-            // shouldEqualSequenceTolerance(oneRowRef.data(), oneRowRef.data()+size, rowNormPrepared.data(), epsilon);
+             prepareRows(a, rowPrepared, rowOffset, rowScaling, ZeroMean | UnitNorm);
+             rowStatistics(rowPrepared, rowMeanPrepared, rowStdDevPrepared, rowNormPrepared);
+             shouldEqualSequenceTolerance(zeroRowRef.begin(), zeroRowRef.end(), rowMeanPrepared.begin(), epsilon);
+             shouldEqualSequenceTolerance(oneRowRef.begin(), oneRowRef.end(), rowNormPrepared.begin(), epsilon);
 
-            // ap = rowPrepared / pointWise(repeatMatrix(rowScaling, 1, size)) + repeatMatrix(rowOffset, 1, size);
-            // shouldEqualSequenceTolerance(a.data(), a.data()+size*size, ap.data(), epsilon);
-        // }
+             ap = rowPrepared / pointWise(repeatMatrix(rowScaling, 1, size)) + repeatMatrix(rowOffset, 1, size);
+             shouldEqualSequenceTolerance(a.begin(), a.end(), ap.begin(), epsilon);
+         }
 
-        // {
-            // Matrix a(size, size, 2.0), aref(size, size, 1.0/std::sqrt((double)size));
+         {
+             Matrix a({ size, size }, 2.0), aref({ size, size }, 1.0 / std::sqrt((double)size));
 
-            // prepareColumns(a, columnPrepared, columnOffset, columnScaling, ZeroMean | UnitVariance);
-            // shouldEqualSequence(a.data(), a.data()+size*size, columnPrepared.data());
+             prepareColumns(a, columnPrepared, columnOffset, columnScaling, ZeroMean | UnitVariance);
+             shouldEqualSequence(a.begin(), a.end(), columnPrepared.begin());
 
-            // prepareColumns(a, columnPrepared, columnOffset, columnScaling, ZeroMean | UnitNorm);
-            // shouldEqualSequenceTolerance(aref.data(), aref.data()+size*size, columnPrepared.data(), epsilon);
-            // Matrix ap = columnPrepared / pointWise(repeatMatrix(columnScaling, size, 1)) + repeatMatrix(columnOffset, size, 1);
-            // shouldEqualSequenceTolerance(a.data(), a.data()+size*size, ap.data(), epsilon);
+             prepareColumns(a, columnPrepared, columnOffset, columnScaling, ZeroMean | UnitNorm);
+             shouldEqualSequenceTolerance(aref.begin(), aref.end(), columnPrepared.begin(), epsilon);
+             Matrix ap = columnPrepared / pointWise(repeatMatrix(columnScaling, size, 1)) + repeatMatrix(columnOffset, size, 1);
+             shouldEqualSequenceTolerance(a.begin(), a.end(), ap.begin(), epsilon);
 
-            // prepareRows(a, rowPrepared, rowOffset, rowScaling, ZeroMean | UnitVariance);
-            // shouldEqualSequence(a.data(), a.data()+size*size, rowPrepared.data());
+             prepareRows(a, rowPrepared, rowOffset, rowScaling, ZeroMean | UnitVariance);
+             shouldEqualSequence(a.begin(), a.end(), rowPrepared.begin());
 
-            // prepareRows(a, rowPrepared, rowOffset, rowScaling, ZeroMean | UnitNorm);
-            // shouldEqualSequenceTolerance(aref.data(), aref.data()+size*size, rowPrepared.data(), epsilon);
-            // ap = rowPrepared / pointWise(repeatMatrix(rowScaling, 1, size)) + repeatMatrix(rowOffset, 1, size);
-            // shouldEqualSequenceTolerance(a.data(), a.data()+size*size, ap.data(), epsilon);
-        // }
-    // }
+             prepareRows(a, rowPrepared, rowOffset, rowScaling, ZeroMean | UnitNorm);
+             shouldEqualSequenceTolerance(aref.begin(), aref.end(), rowPrepared.begin(), epsilon);
+             ap = rowPrepared / pointWise(repeatMatrix(rowScaling, 1, size)) + repeatMatrix(rowOffset, 1, size);
+             shouldEqualSequenceTolerance(a.begin(), a.end(), ap.begin(), epsilon);
+         }
+     }
 
     // void testCholesky()
     // {
@@ -1241,23 +1235,23 @@ struct MatrixTestSuite
     MatrixTestSuite()
     : test_suite("MatrixTestSuite")
     {
-        // add( testCase(&MatrixTest::testOStreamShifting));
+        add( testCase(&MatrixTest::testOStreamShifting));
         add( testCase(&MatrixTest::testMatrix));
         add( testCase(&MatrixTest::testArgMinMax));
-        // add( testCase(&MatrixTest::testColumnAndRowStatistics));
-        // add( testCase(&MatrixTest::testColumnAndRowPreparation));
-        // add( testCase(&MatrixTest::testCholesky));
-        // add( testCase(&MatrixTest::testQR));
-        // add( testCase(&MatrixTest::testLinearSolve));
-        // add( testCase(&MatrixTest::testUnderdetermined));
-        // add( testCase(&MatrixTest::testOverdetermined));
-        // add( testCase(&MatrixTest::testIncrementalLinearSolve));
-        // add( testCase(&MatrixTest::testInverse));
-        // add( testCase(&MatrixTest::testSymmetricEigensystem));
-        // add( testCase(&MatrixTest::testNonsymmetricEigensystem));
-        // add( testCase(&MatrixTest::testSymmetricEigensystemAnalytic));
-        // add( testCase(&MatrixTest::testDeterminant));
-        // add( testCase(&MatrixTest::testSVD));
+        add( testCase(&MatrixTest::testColumnAndRowStatistics));
+        add( testCase(&MatrixTest::testColumnAndRowPreparation));
+        //add( testCase(&MatrixTest::testCholesky));
+        //add( testCase(&MatrixTest::testQR));
+        //add( testCase(&MatrixTest::testLinearSolve));
+        //add( testCase(&MatrixTest::testUnderdetermined));
+        //add( testCase(&MatrixTest::testOverdetermined));
+        //add( testCase(&MatrixTest::testIncrementalLinearSolve));
+        //add( testCase(&MatrixTest::testInverse));
+        //add( testCase(&MatrixTest::testSymmetricEigensystem));
+        //add( testCase(&MatrixTest::testNonsymmetricEigensystem));
+        //add( testCase(&MatrixTest::testSymmetricEigensystemAnalytic));
+        //add( testCase(&MatrixTest::testDeterminant));
+        //add( testCase(&MatrixTest::testSVD));
 
         // add( testCase(&RandomTest::testTT800));
         // add( testCase(&RandomTest::testMT19937));
