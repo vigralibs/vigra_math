@@ -338,7 +338,7 @@ template <class T>
 Matrix<T>
 eye(ArrayIndex size)
 {
-    return identityMatrix(size);
+    return identityMatrix<T>(size);
 }
 
     /** create matrix of ones of the given size.

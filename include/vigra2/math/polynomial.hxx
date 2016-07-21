@@ -86,7 +86,7 @@ class PolynomialView
 
         /** Scalar type associated with <tt>RealPromote</tt>
         */
-    typedef typename NumericTraits<RealPromote>::ValueType Real;
+    typedef typename NumericTraits<RealPromote>::value_type Real;
 
         /** Complex type associated with <tt>RealPromote</tt>
         */
@@ -398,7 +398,7 @@ template <class T>
 void
 PolynomialView<T>::minimizeOrder(double epsilon)
 {
-    while(std::abs(coeffs_[order_]) <= epsilon && order_ > 0)
+    while(abs(coeffs_[order_]) <= epsilon && order_ > 0)
             --order_;
 }
 
@@ -417,7 +417,7 @@ PolynomialView<T>::balance()
 {
     Real p0 = abs(coeffs_[0]), po = abs(coeffs_[order_]);
     Real norm = (p0 > 0.0)
-                    ? VIGRA_CSTD::sqrt(p0*po)
+                    ? sqrt(p0*po)
                     : po;
     for(unsigned int i = 0; i<=order_; ++i)
         coeffs_[i] /= norm;
@@ -737,9 +737,9 @@ std::complex<T> complexDiv(std::complex<T> const & a, std::complex<T> const & b)
 template <class T>
 std::complex<T> deleteBelowEpsilon(std::complex<T> const & x, double eps)
 {
-    return std::abs(x.imag()) <= 2.0*eps*std::abs(x.real())
+    return abs(x.imag()) <= 2.0*eps*abs(x.real())
                 ? std::complex<T>(x.real())
-                : std::abs(x.real()) <= 2.0*eps*std::abs(x.imag())
+                : abs(x.real()) <= 2.0*eps*abs(x.imag())
                     ? std::complex<T>(NumericTraits<T>::zero(), x.imag())
                     :  x;
 }
@@ -750,21 +750,21 @@ laguerreStartingGuess(POLYNOMIAL const & p)
 {
     double N = p.order();
     typename POLYNOMIAL::value_type centroid = -p[p.order()-1] / N / p[p.order()];
-    double dist = VIGRA_CSTD::pow(std::abs(p(centroid) / p[p.order()]), 1.0 / N);
+    double dist = pow(abs(p(centroid) / p[p.order()]), 1.0 / N);
     return centroid + dist;
 }
 
 template <class POLYNOMIAL, class Complex>
 int laguerre1Root(POLYNOMIAL const & p, Complex & x, unsigned int multiplicity)
 {
-    typedef typename NumericTraits<Complex>::ValueType Real;
+    typedef typename NumericTraits<Complex>::value_type Real;
 
     double frac[] = {0.0, 0.5, 0.25, 0.75, 0.13, 0.38, 0.62, 0.88, 1.0};
     int maxiter = 80,
         count;
     double N = p.order();
     double eps  = p.epsilon(),
-           eps2 = VIGRA_CSTD::sqrt(eps);
+           eps2 = sqrt(eps);
 
     if(multiplicity == 0)
         x = laguerreStartingGuess(p);
@@ -778,18 +778,18 @@ int laguerre1Root(POLYNOMIAL const & p, Complex & x, unsigned int multiplicity)
         Complex p0(p[p.order()]);
         Complex p1(0.0);
         Complex p2(0.0);
-        Real ax    = std::abs(x);
-        Real err = std::abs(p0);
+        Real ax  = abs(x);
+        Real err = abs(p0);
         for(int i = p.order()-1; i >= 0; --i)
         {
             p2  = p2  * x  + p1;
             p1  = p1  * x  + p0;
             p0  = p0  * x  + p[i];
-            err = err * ax + std::abs(p0);
+            err = err * ax + abs(p0);
         }
         p2 *= 2.0;
         err *= eps;
-        Real ap0 = std::abs(p0);
+        Real ap0 = abs(p0);
         if(ap0 <= err)
         {
             break;  // converged
@@ -800,8 +800,7 @@ int laguerre1Root(POLYNOMIAL const & p, Complex & x, unsigned int multiplicity)
         // estimate root multiplicity according to Tien Chen
         if(g2 != 0.0)
         {
-            multiplicity = (unsigned int)VIGRA_CSTD::floor(N /
-                                (std::abs(N * complexDiv(h, g2) - 1.0) + 1.0) + 0.5);
+            multiplicity = (unsigned int)floor(N / (abs(N * complexDiv(h, g2) - 1.0) + 1.0) + 0.5);
             if(multiplicity < 1)
                 multiplicity = 1;
         }
@@ -812,7 +811,7 @@ int laguerre1Root(POLYNOMIAL const & p, Complex & x, unsigned int multiplicity)
         {
             Complex x1 = x;
             int derivativeMultiplicity = laguerre1Root(p.getDerivative(), x1, multiplicity-1);
-            if(derivativeMultiplicity && std::abs(p(x1)) < std::abs(p(x)))
+            if(derivativeMultiplicity && abs(p(x1)) < abs(p(x)))
             {
                 // successful search on derivative
                 x = x1;
@@ -824,10 +823,10 @@ int laguerre1Root(POLYNOMIAL const & p, Complex & x, unsigned int multiplicity)
                 mayTryDerivative = false;
             }
         }
-        Complex sq = VIGRA_CSTD::sqrt((N - 1.0) * (N * h - g2));
+        Complex sq = sqrt((N - 1.0) * (N * h - g2));
         Complex gp = g + sq;
         Complex gm = g - sq;
-        if(std::abs(gp) < std::abs(gm))
+        if(abs(gp) < abs(gm))
             gp = gm;
         Complex dx;
         if(gp != 0.0)
@@ -837,7 +836,7 @@ int laguerre1Root(POLYNOMIAL const & p, Complex & x, unsigned int multiplicity)
         else
         {
             // re-initialisation trick due to Numerical Recipes
-            dx = (1.0 + ax) * Complex(VIGRA_CSTD::cos(double(count)), VIGRA_CSTD::sin(double(count)));
+            dx = (1.0 + ax) * Complex(cos(double(count)), sin(double(count)));
         }
         Complex x1 = x - dx;
 
@@ -1005,7 +1004,7 @@ bool polynomialRoots(POLYNOMIAL const & poriginal, VECTOR & roots, bool polishRo
         Complex a = p[2];
         Complex b = p[1];
         Complex c = p[0];
-        Complex b2 = std::sqrt(b*b - 4.0*a*c);
+        Complex b2 = sqrt(b*b - 4.0*a*c);
         Complex q;
         if((conj(b)*b2).real() >= 0.0)
             q = -0.5 * (b + b2);
